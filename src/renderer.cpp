@@ -95,28 +95,6 @@ void Renderer::Render(Snake const snake, Snake const snake2, SDL_Point const &fo
   //Render Threat
   RenderThreat(threat, block);
 
-  // Render threat , unique lock
-  /* std::unique_lock<std::mutex> uLock(_mutex);
-  switch (threat->predatorType)
-  {
-  case Predator::mangoose:
-    SDL_SetRenderDrawColor(sdl_renderer, 0xF3, 0xF3, 0x26, 0xFF);
-    break;
-  case Predator::eagle:
-    SDL_SetRenderDrawColor(sdl_renderer, 0xFC, 0x4B, 0x00, 0xFF);
-    break;
-  case Predator::badger:
-    SDL_SetRenderDrawColor(sdl_renderer, 0xD4, 0x12, 0x44, 0xFF);
-    break;
-  default:
-    break;
-  }
-  uLock.unlock(); 
-
-  block.x = threat->loc_x * block.w;
-  block.y = threat->loc_y * block.h;
-  SDL_RenderFillRect(sdl_renderer, &block); */
-
   // Update Screen
   SDL_RenderPresent(sdl_renderer);
 }

@@ -40,10 +40,7 @@ void Game::Run(Renderer &renderer, std::size_t target_frame_duration) {
   bool running = true;
 
   // Initializing player objects of the controller class
-  //Controller snakePlayer1(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT);
-  //Controller snakePlayer2(SDLK_w, SDLK_s, SDLK_a, SDLK_d);
-  //Controller std::future<Controller> snakePlayer1(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT);
-  //Controller std::future<Controller> snakePlayer2(SDLK_w, SDLK_s, SDLK_a, SDLK_d); 
+
   Controller snakePlayer1(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT);
   Controller snakePlayer2(SDLK_w, SDLK_s, SDLK_a, SDLK_d); 
 
@@ -52,19 +49,17 @@ void Game::Run(Renderer &renderer, std::size_t target_frame_duration) {
 
     //Starting threads with std::async to let the system decide to run the thread in sync or async
     //using deferred launch parameter to see the performance in async execution at first
-    //snakeplayer1 = std::async(std::launch::deferred, HandleInput, std::ref(running), std::ref(Snake));
-    //snakePlayer2 = std::async(std::launch::deferred, HandleInput, std::ref(running), std::ref(Snake2));
+
     std::future<void> player1(std::async(std::launch::deferred, 
                             &Controller::HandleInput, snakePlayer1, std::ref(running), std::ref(snake)));
     std::future<void> player2(std::async(std::launch::deferred, 
                             &Controller::HandleInput, snakePlayer2, std::ref(running), std::ref(snake2)));
 
     // Input, Update, Render - the main game loop.// added 2nd snake
-    //controller.HandleInput(running, snake, snake2);
+   
     Update();
     renderer.Render(snake, snake2, food, threat);
-    //renderer.Render(snake, snake2, food);
-    //renderer.RenderThreat(threat, &block);
+ 
 
     frame_end = SDL_GetTicks();
 
@@ -112,20 +107,7 @@ void Game::PlaceThreat() {
     x = random_w(engine);
     y = random_h(engine);
     type = Predator(rand() % 3);
-    //type = types[random_type(engine2)];
-    //type = random_type(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    /* if (!snake.SnakeCell(x, y) && !snake2.SnakeCell(x, y)) {
-      if (x < 320 && y < 320) {
-        type = Predator::mangoose;
-      } else if (x < 640 && y < 320)
-      {
-        type = Predator::eagle;
-      } else {
-        type =Predator::badger;
-      } 
-    } */
+
     if (!snake.SnakeCell(x, y) && !snake2.SnakeCell(x, y) && !Game::FoodCell(x, y)) {
       threat = std::make_unique<Threat> (x, y, type);              // create and place threat
       threat->loc_x = x;

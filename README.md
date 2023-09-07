@@ -1,12 +1,36 @@
-# CPPND: Capstone Snake Game Example
+# CPPND: Capstone Snake Game Project Details
 
-This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
+In the original Snake game, player navigates the snake to randomly placed food in the grid to let the snake the consume food, so that it grows in size and accelerates further. Player accumulates score if the snake grows and increase its speed. I extended this snake game with following additional features. 
+1.	Added another snake and controller to launch two snakes using the threads functionality in C++ so that two players can compete simultaneously.
+2.	Added predators randomly in the grid to make the game more challenging since the encounter with predator would lower the score and slow down the snakes. Created Threat objects on the grid for the predators to accomplish this.
 
-<img src="snake_game.gif"/>
+Rubric Points:
 
-The Capstone Project gives you a chance to integrate what you've learned throughout this program. This project will become an important part of your portfolio to share with current and future colleagues and employers.
+1.	Project code is compiling successfully without errors and warnings in the Udacity workspace. 
+2.	cmake and make is used for building the source code.
 
-In this project, you can build your own C++ application or extend this Snake game, following the principles you have learned throughout this Nanodegree Program. This project will demonstrate that you can independently create applications using a wide range of C++ features.
+Loops, Functions, I/O:
+
+1.	In the game.cpp file a new function PlaceThreat() with the “if loop” statement is used place the Threat objects in the grid. 
+2.	In the “renderer.cpp” file RenderThreat() function is added with the switch statement to render the blocks as per enum values. 
+3.	In the main.cpp source code, “std::ofstream” lib is used to get the user name and store the values in a text file and later the  score is appended in the same file once the game is over.
+
+Object Oriented Programming:
+
+1.	“class Threat” is added in the “game.h/cpp” that holds the threat member methods and variables. Objects of this class is placed randomly in the grid using PlaceThreat() in the game.cpp file. 
+2.	“Predator” with type enum is used in this project to store various type of predators. This predator enum type is passed on to the Threat() method of the “class Threat” to construct the Threat objects. 
+3.	Appropriate Class constructors, member initializations, getters/setters are used for “class Threat”.
+
+Memory Management:
+
+1.	“std::unique_ptr<Threat> threat” is declared in the “game.h” to use the unique_ptr type smart pointer to point to the memory addresses Threat objects.
+2.	Memory is allocated for the “threat” smart pointer using “std::make_unique<Threat>” when object is constructed during the invocation of  PlaceThreat() function. This pointer will be out of scope when this function returns.
+2.	References are passed in the “RenderThreat(std::unique_ptr<Threat> const &threat, SDL_Rect &block)” function in the renderer.cpp file, that prevents copying the values.
+
+Concurrency:
+
+1.	“std::thread” is used to launch two threads for two players. Join() is also used along the respective threads. Contructor and method HandleInput() of “class Controller” were modified to handle two sets (I/O) key inputs.
+2.	“std::unique_lock<std::mutex>” is used in the RenderThreat() method of renderer.cpp to avoid data race when one thread is accessing it. 
 
 ## Dependencies for Running Locally
 * cmake >= 3.7

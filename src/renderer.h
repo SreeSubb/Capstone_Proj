@@ -18,7 +18,6 @@ class Renderer {
 
   //Added 2nd snake & threat pointer
   void Render(Snake const snake, Snake const snake2, SDL_Point const &food, std::unique_ptr<Threat> const &threat);
-  //void Render(Snake const snake, Snake const snake2, SDL_Point const &food);
   void UpdateWindowTitle(int score1, int score2, int fps);
   void RenderThreat(std::unique_ptr<Threat> const &threat, SDL_Rect &block); 
 
@@ -30,7 +29,7 @@ class Renderer {
   const std::size_t screen_height;
   const std::size_t grid_width;
   const std::size_t grid_height;
-
+  //mutex to object to pass to unique lock
   std::mutex _mutex;
 };
 

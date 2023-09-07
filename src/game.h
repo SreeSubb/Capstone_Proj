@@ -18,7 +18,7 @@ enum Predator
   eagle,
   badger
 };
-
+//threat class
 class Threat {
   public:
     int loc_x, loc_y;
@@ -26,8 +26,6 @@ class Threat {
     Threat();
     Threat(int x, int y, Predator type);
     ~Threat();
-
-  private:
 
 };
 
@@ -49,7 +47,7 @@ class Game {
   Snake snake2;
   SDL_Point food;
 
-  // pointers of Threat class
+  //smart pointer of Threat class
   std::unique_ptr<Threat> threat;
   
   std::random_device dev;

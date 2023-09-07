@@ -39,9 +39,8 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-//Adding 2nd snake
+//Adding 2nd snake for rendering
 void Renderer::Render(Snake const snake, Snake const snake2, SDL_Point const &food, std::unique_ptr<Threat> const &threat) {
-//void Renderer::Render(Snake const snake, Snake const snake2, SDL_Point const &food) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -94,16 +93,12 @@ void Renderer::Render(Snake const snake, Snake const snake2, SDL_Point const &fo
 
   //Render Threat
   RenderThreat(threat, block);
-
-  // Update Screen
   SDL_RenderPresent(sdl_renderer);
 }
 //add 2nd snake and score, get the player snake score printed.
 //Rendering threats
 void Renderer::RenderThreat(std::unique_ptr<Threat> const &threat, SDL_Rect &block) {
-
-  std::unique_lock<std::mutex> uLock(_mutex);
-  // Render threat
+  std::unique_lock<std::mutex> uLock(_mutex);                                          //unique lock
   switch (threat->predatorType)
   {
   case Predator::mangoose:
@@ -119,12 +114,11 @@ void Renderer::RenderThreat(std::unique_ptr<Threat> const &threat, SDL_Rect &blo
     break;
   }
   uLock.unlock(); 
- // SDL_SetRenderDrawColor(sdl_renderer, 0xFC, 0x4B, 0x00, 0xFF);
   block.x = threat->loc_x * block.w;
   block.y = threat->loc_y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
 } 
-
+//output scores
 void Renderer::UpdateWindowTitle(int score1, int score2, int fps) {
   std::string title{"1st Player Score: " + std::to_string(score1) + " & " 
                   + "2ndt Player Score: " + std::to_string(score2) + " FPS: " 

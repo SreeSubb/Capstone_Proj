@@ -32,26 +32,6 @@ void Controller::HandleInput(bool &running, Snake &snake) const {
       else
           ChangeDirection(snake, Snake::Direction::kRight,
                           Snake::Direction::kLeft);
-        // 2nd snake
-        /*case SDLK_w:
-          ChangeDirection(snake2, Snake::Direction::kUp,
-                          Snake::Direction::kDown);
-          break;
-
-        case SDLK_s:
-          ChangeDirection(snake2, Snake::Direction::kDown,
-                          Snake::Direction::kUp);
-          break;
-
-        case SDLK_a:
-          ChangeDirection(snake2, Snake::Direction::kLeft,
-                          Snake::Direction::kRight);
-          break;
-
-        case SDLK_d:
-          ChangeDirection(snake2, Snake::Direction::kRight,
-                          Snake::Direction::kLeft);
-          break;  */
-    }
+      }
   }
 }

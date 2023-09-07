@@ -39,32 +39,30 @@ void Game::Run(Renderer &renderer, std::size_t target_frame_duration) {
   int frame_count = 0;
   bool running = true;
 
-  // Initializing player objects of the controller class
-
+  // Initializing player objects of the controller class 
   Controller snakePlayer1(SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT);
   Controller snakePlayer2(SDLK_w, SDLK_s, SDLK_a, SDLK_d); 
 
   while (running) {
     frame_start = SDL_GetTicks();
 
-    //Starting threads with std::async to let the system decide to run the thread in sync or async
-    //using deferred launch parameter to see the performance in async execution at first
+    //Starting two threads with 2 player HandleInput
+    //Passing controller and ref objects as well.
+    //std::future<void> player1(std::async(std::launch::deferred, 
+    //                     &Controller::HandleInput, snakePlayer1, std::ref(running), std::ref(snake)));
+    //std::future<void> player2(std::async(std::launch::deferred, 
+    //                     &Controller::HandleInput, snakePlayer2, std::ref(running), std::ref(snake2)));
+    std::thread player1(&Controller::HandleInput, snakePlayer1, std::ref(running), std::ref(snake));
+    std::thread player2(&Controller::HandleInput, snakePlayer2, std::ref(running), std::ref(snake2));
+	  player1.join();
+    player2.join();
 
-    std::future<void> player1(std::async(std::launch::deferred, 
-                            &Controller::HandleInput, snakePlayer1, std::ref(running), std::ref(snake)));
-    std::future<void> player2(std::async(std::launch::deferred, 
-                            &Controller::HandleInput, snakePlayer2, std::ref(running), std::ref(snake2)));
-
-    // Input, Update, Render - the main game loop.// added 2nd snake
-   
+    // Input, Update, Render - the main game loop. added 2nd snake
     Update();
     renderer.Render(snake, snake2, food, threat);
- 
-
     frame_end = SDL_GetTicks();
 
-    // Keep track of how long each loop through the input/update/render cycle
-    // takes.
+    // Keep track of how long each loop through the input/update/render cycle takes
     frame_count++;
     frame_duration = frame_end - frame_start;
 
@@ -89,9 +87,13 @@ void Game::PlaceFood() {
   while (true) {
     x = random_w(engine);
     y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
+    // Check that the location is not occupied by a snake item before placing food.
     if (!snake.SnakeCell(x, y) && !snake2.SnakeCell(x, y)) {
+      food.x = x;
+      food.y = y;
+      return;
+    }
+    if(x == !(threat->loc_x) && y == (!threat->loc_y)) {
       food.x = x;
       food.y = y;
       return;
@@ -99,22 +101,22 @@ void Game::PlaceFood() {
   }
 }
 
-//place threat
+//place threat object
 void Game::PlaceThreat() {
   int x, y;
   Predator type;
   while (true) {
     x = random_w(engine);
     y = random_h(engine);
-    type = Predator(rand() % 3);
-
+    type = Predator(rand() % 3);                                   //random threat type
+    // Check that the location is not occupied by a snake and food before placing threat.
     if (!snake.SnakeCell(x, y) && !snake2.SnakeCell(x, y) && !Game::FoodCell(x, y)) {
       threat = std::make_unique<Threat> (x, y, type);              // create and place threat
       threat->loc_x = x;
       threat->loc_y = y;
       threat->predatorType = type;
       return;
-      }
+    }
   }
 }
 
@@ -141,10 +143,10 @@ void Game::Update() {
   {
     scorePlayer1--;
     snake.speed -= 0.05;
-    PlaceFood(); 
+    PlaceThreat();
   }
 
-// 2nsd snake
+  // 2nd snake
   if (food.x == new_x2 && food.y == new_y2) {
     scorePlayer2++;
     PlaceFood();
@@ -156,16 +158,15 @@ void Game::Update() {
   {
     scorePlayer2--;
     snake2.speed -= 0.05;
-    PlaceFood(); 
+    PlaceThreat();
   }
 }
 //check for food
 bool Game::FoodCell(int x, int y) {
-  if (x == food.x && y == food.y) {
+  if (x == food.x && y == food.y)
     return true;
-  }
 }
-
+//get the scores of both players
 int Game::Player1GetScore() const { return scorePlayer1; }
 int Game::Player2GetScore() const { return scorePlayer2; }
 int Game::Player2GetSize() const { return snake.size; }
